@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+
+echo "[Z4][SETUP] $*"
+
+set -euo pipefail
+IFS=$'\n\t'
+set -vx
+
+source /etc/os-release
+
+sudo apt update
+sudo apt upgrade -y
+sudo apt install -y screen snapd nginx python3-certbot-nginx certbot git rvm emacs mosquitto
+gpg --keyserver keyserver.ubuntu.com --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3 7D2BAF1CF37B13E2069D6956105BD0E739499BDB
+curl -sSL https://get.rvm.io | sudo bash -s stable
+rvm install ruby-head-stable
+rvm list
+gem install irb sinatra discordrb json pstore paho-mqtt browser rotp openssl rb-inotify
+
+mkdir -p views public db org html tmp templates
+
+if [[ ! -f "env.sh" ]]; then
+cat <<EOF > env.sh
+# get from discord app dashboard
+export DISCORD_CLIENT_ID='';
+export DISCORD_CLIENT_SECRET='';
+export DISCORD_APPLICATION_ID='';
+export DISCORD_TOKEN='';
+export DISCORD_PERMISSIONS='';
+EOF
+editor env.sh
+fi
