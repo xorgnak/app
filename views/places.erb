@@ -1,6 +1,10 @@
+<% @h = Hash.new { |h,k| h[k.to_sym] = params[k] } %>
+<% params.keys.each {|e| @h[e] } %>
+
 <h1 style="text-align: center; color: white; background-color: black;">places</h1>
+<code><%= @h %></code>
 <ol>
-<% HERE.filter(types: params['type'], areas: params['area']) do |e| %>
+<% HERE.filter(@h) do |e| %>
 <li style='width: 100%;'><%= e.for %></li>
 <% end %>
 </ol>
