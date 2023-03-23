@@ -24,6 +24,8 @@ module DB
   end
   class Table
     def initialize k, h={}
+      @key = k
+      @id = @key.split("-")[1]
       @db = PStore.new("db/#{k}.store", true)
       @db.transaction do |db|
         if db.keys.length == 0
@@ -31,6 +33,8 @@ module DB
         end
       end
     end
+    def id; @key; end
+    def for; @id; end
     def keys
       @db.transaction do |db|
         db.keys
@@ -85,4 +89,10 @@ end
 
 DB[:user] = { xp: 0, gp: 0, name: "promotor" }
 DB[:chan] = { brand: "", item: "", gp: 0, val: 1, pay: 1, xp: 0, gps: "", pos: "", until: "", place: "" }
-
+DB[:item] = { priv: [], places: [], valid: [], level: 0 }
+DB[:priv] = { can: [], cannot: [] }
+DB[:place] = { crossstreets: [], gps: '', address: '', items: [],
+               areas: [], types: [], ammenities: [], affluence: 0, scans: 0, returns: 0 }
+DB[:street] = { }
+DB[:area] = { intersections: [] }
+DB[:intersection] = { affluence: 0, scans: 0, returns: 0, areas: [], places: [] }

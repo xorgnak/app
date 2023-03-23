@@ -1,0 +1,8 @@
+<h1>debug</h1>
+<!-- <code style='width: 100%;'><%= params %></code> -->
+
+<ol>
+<% HERE.filter(types: params['types'], areas: params['areas']) do |e| %>
+<li style='width: 100%;'><%= e.id %></li>
+<% end %>
+</ol>

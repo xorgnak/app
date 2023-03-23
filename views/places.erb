@@ -1,0 +1,6 @@
+<h1 style="text-align: center; color: white; background-color: black;">places</h1>
+<ol>
+<% HERE.filter(types: params['type'], areas: params['area']) do |e| %>
+<li style='width: 100%;'><%= e.for %></li>
+<% end %>
+</ol>

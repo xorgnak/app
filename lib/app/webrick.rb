@@ -1,8 +1,16 @@
 module APP
-  @@APP = WEBrick::HTTPServer.new :Port => 4567, :DocumentRoot => 'public/'
+  @@APP = WEBrick::HTTPServer.new :Port => 4567, :DocumentRoot => "#{Dir.pwd}/public/"
   @@APP.mount_proc '/' do |req, res|
     @app = App.new(req)
-    res.body = ERB.new(@app.body).result(binding)
+    if @app[:uri] == '/'
+      params = @app.params
+    res.body = ERB.new(@app.html).result(binding)
+    elsif File.exist? "views/#{@app[:uri]}.erb"
+      params = @app.params
+      res.body = ERB.new(File.read("views/#{@app[:uri]}.erb")).result(binding)
+    elsif File.exist? "public/#{@app[:uri]}"
+      res.body = File.read("public/#{@app[:uri]}")
+    end
   end
   @@APP.mount_proc '/manifest.webmanifest' do |req, res|
     res['Content-Type'] = 'application/javascript'
@@ -25,18 +33,25 @@ module APP
       @req = req
       #puts "#{@req}"
       @params = @req.query
+      @uri = @req.unparsed_uri.split('?')[0]
       @app = {
         head: 'head',
         body: 'body',
         img: '/bg.img',
-        uri: @req.unparsed_uri,
+        uri: @uri,
         host: @req.host
       }
       [:head, :body].each { |e| if @params.has_key?(e.to_s); @app[e] = @params[e.to_s]; end }
       @head, @body = File.read("views/#{@app[:head]}.erb"), File.read("views/#{@app[:body]}.erb")
       puts "#{@app}"
     end
-    def body
+    def [] k
+      @app[k]
+    end
+    def params
+      @params
+    end
+    def html
       b = [
         "<!DOCTYPE html><html><head>",
         @head,
