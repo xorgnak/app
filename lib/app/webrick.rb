@@ -5,11 +5,11 @@ module APP
     if @app[:uri] == '/'
       params = @app.params
     res.body = ERB.new(@app.html).result(binding)
-    elsif File.exist? "views/#{@app[:uri]}.erb"
+    elsif File.exist? "views#{@app[:uri]}.erb"
       params = @app.params
-      res.body = ERB.new(File.read("views/#{@app[:uri]}.erb")).result(binding)
-    elsif File.exist? "public/#{@app[:uri]}"
-      res.body = File.read("public/#{@app[:uri]}")
+      res.body = ERB.new(File.read("views#{@app[:uri]}.erb")).result(binding)
+    elsif File.exist? "public#{@app[:uri]}"
+      res.body = File.read("public#{@app[:uri]}")
     end
   end
   @@APP.mount_proc '/manifest.webmanifest' do |req, res|
