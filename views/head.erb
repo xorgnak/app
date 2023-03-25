@@ -1,8 +1,25 @@
-<title>z4</title>
+    <title><%= @app[:title] || 'Z4' %></title>
 <style>
-body { width: 100vw; height: 100vh; margin: 0; padding: 0; color: white; }
+body { width: 100vw; height: 100vh; margin: 0; padding: 0; }
 body > * { max-width: 100vw; }
 #form { width: 100%; height: 100%; }
 h1 { margin: 0; padding: 0; }
 #bg { width: 100vw; height: 100vh; z-index: -10; position: fixed; top: 0; left: 0; }
+.material-icons { vertical-align: middle; }
 </style>
+
+<meta name="viewport" content="initial-scale=1, maximum-scale=1">
+<!-- icons -->
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<!-- badges -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+
+<!-- mqtt broker -->
+<script src='https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.1.0/paho-mqtt.js'></script>
+
+    <!-- jquery -->
+<script src="https://code.jquery.com/jquery-3.6.4.min.js" integrity="sha256-oP6HI9z1XaZNBrJURtCoUT5SUnxFr8s3BzRl+cbzUq8=" crossorigin="anonymous"></script>
+
+    <!-- qr generator/scanner -->
+<script src="https://cdn.jsdelivr.net/npm/jquery.qrcode@1.0.3/jquery.qrcode.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>

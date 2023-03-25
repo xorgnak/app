@@ -1,0 +1,59 @@
+<style>
+  html { color: black; }
+  a { text-decoration: none; color: black; }
+  .s { border: thin outset black; }
+  .i { border: thin outset red; }
+  .p { border: thin outset gold; }
+</style>
+<% if params.has_key?('x') && params.has_key?('y') && params.has_key?('p') %>
+<% @place = CITY[params['x']][params['y']][params['p']] %>
+<p style='width: 100%; text-align: center;'><%= @place.for %></p>
+  <p style='width: 100%; text-align: center;'>
+    <span class='b'><span class='material-icons'>cake</span><span><%= @place[:affluence] %></span></span>
+    <span class='b'><span class='material-icons'>assignment_ind</span><span><%= @place[:affinity] %></span></span>
+    <span class='b'><span class='material-icons'>assignment</span><span><%= @place[:scans] %></span></span>
+    <span class='b'><span class='material-icons'>assignment_return</span><span><%= @place[:returns] %></span></span>
+    <span class='b'><span class='material-icons'>celebration</span><span><%= @place[:influence] %></span></span>
+  </p>
+  <p><span>areas:</span>
+    <% @place[:areas].each do |e| %>
+    <span><%= e %></span>
+    <% end %>
+  </p>
+    <p><span>types:</span>
+      <% @place[:types].each do |e| %>
+      <span><%= e %></span>
+      <% end %>
+    </p>
+<p><span>ammenities:</span
+  <% @place[:ammenities].each do |e| %>
+  <span><%= e %></span>
+  <% end %>
+    </p>
+<% elsif params.has_key?('x') && params.has_key?('y') %>
+  <% CITY[params['x']][params['y']].places.each do |e| %>
+<p>
+  <a class='p' href='https://<%= @app[:host] %>/city?x=<%= params['x'] %>&y=<%= params['y'] %>&p=<%= APP.enc(e) %>'><%= e %></a>
+</p>
+  <% end %>
+<% elsif params.has_key?('x') %>
+  <% CITY[params['x']].to_h.each_pair do |e, h| %>
+<p>
+  <a class='s' href='https://<%= @app[:host] %>/city?x=<%= params['x'] %>&y=<%= APP.enc(e) %>'><%= e %></a>
+  <% h[:places].each do |x| %>
+  <span>|</span>
+  <a class='p' href='https://<%= @app[:host] %>/city?x=<%= params['x'] %>&y=<%= APP.enc(x) %>'><%= x %></a>
+    <% end %>
+  </p>
+  <% end %>
+<% else %>
+<% CITY.to_h.each_pair do |e, h| %>
+<p>
+  <a class='s' href='https://<%= @app[:host] %>/city?x=<%= APP.enc(e) %>'><%= e %></a>
+  <% h.keys.each do |x| %>
+  <span>|</span>
+      <a class='i' href='https://<%= @app[:host] %>/city?x=<%= APP.enc(e) %>&y=<%= x %>'><%= x %></a>
+  <% end %>
+  </p>
+  <% end %>
+<% end %>

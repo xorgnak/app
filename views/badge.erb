@@ -1,0 +1,6 @@
+<h3 style='width: 100%; text-align: center; background-color: black; color: white;'><%= @app[:brand] %></h3>
+<div id='qrcode'></div>
+<h3 style='position fixed; bottom: 0; width: 100%; text-align: center; background-color: black; color: white;'><%= @app[:item] %></h3>
+<script>
+$('#qrcode').qrcode('https://<%= @app[:host] %>/<%= @app[:badge] %>');
+</script>

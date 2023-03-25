@@ -92,7 +92,7 @@ DB[:chan] = { brand: "", item: "", gp: 0, val: 1, pay: 1, xp: 0, gps: "", pos: "
 DB[:item] = { priv: [], places: [], valid: [], level: 0 }
 DB[:priv] = { can: [], cannot: [] }
 DB[:place] = { crossstreets: [], gps: '', address: '', items: [],
-               areas: [], types: [], ammenities: [], affluence: 0, scans: 0, returns: 0 }
+               areas: [], types: [], ammenities: [], affluence: 0, scans: 0, returns: 0, affinity: 0, influence: 0 }
 DB[:street] = { }
 DB[:area] = { intersections: [] }
 DB[:intersection] = { affluence: 0, scans: 0, returns: 0, areas: [], places: [] }
