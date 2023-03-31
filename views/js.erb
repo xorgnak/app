@@ -1,0 +1,155 @@
+<% @token = []; %><% 16.times { @token << rand(16).to_s(16) } %><% @tok = @token.join('') %>
+
+state = <%= JSON.generate(DB[:user][@app.params['user']].to_h) %>;
+state['team'] = "<%= @app.params['team'] || 'sandbox' %>";
+state['ctime'] = new Date();
+state['token'] = '<%= @tok %>';
+
+macros = {};
+
+pt = "user&sandbox> loading..."
+
+if (state['name'] === '') {
+gets = 'name'
+} else {
+gets = ''
+}
+puts = ''
+
+function stdout(str) { $("#stdout").append(str + "\n"); console.log("STDOUT>>>", str); }
+function stdlog(str) { $("#stdout").append("LOG: " + str + "\n"); console.log("LOG>>>", str); }
+function stderr(str) { $("#stdout").append("ERROR: " + str + "\n"); console.log("STDERR>>>", str); }
+function stdset(str) { $("#stdout").append(">>> " + str + "\n"); console.log("SET>>>", str); }
+function stdeval(str) { $("#stdout").append("() => " + str + "\n"); console.log("EVAL>>>", str); }
+function stdjs(str) { $("#stdout").append("=> " + str + "\n"); console.log("JS>>>", str); }
+function stdin(str) { $("#stdout").append("STDIN: " + str + "\n"); console.log("STDIN>>>", str); }
+function exec(func) { func(state); }
+function prompt() {
+    psid = state['name'] + "@" + state['team'];
+    ps = ''
+    if (gets !== '') {
+	ps += ">>> " + gets;
+    } else {
+	ps += psid + "> ";
+    }
+    pt = ps
+    if (gets !== '') {
+	stdset("SET: " + gets);
+    }
+    
+    $("#stdin").attr('placeholder', ps);
+}
+$("#stdin").attr('placeholder', pt);
+
+    
+function now() {
+    return new Date();
+}
+
+
+<% @op = DB[:user][@app.params['user']] %>
+
+var client = new Paho.Client(location.hostname, 1883, '<%= @op.for %>');
+
+// set callback handlers
+client.onConnectionLost = onConnectionLost;
+client.onMessageArrived = onMessageArrived;
+
+lwt = new Paho.Message(JSON.stringify(state));
+lwt.destinationName = "<%= @app[:host] %>/lwt";
+// connect the client
+function publish(ch, msg) {
+    state["msg"] = msg
+    message = new Paho.Message(JSON.stringify(state));
+    message.destinationName = "<%= @app[:host] %>/" + ch;
+    client.send(message);
+    stdlog(msg)
+}
+
+
+// called when the client connects
+function onConnect() {
+    // Once a connection has been made, make a subscription and send a message.
+    stdlog("onConnect");
+    client.subscribe("<%= @app[:host] %>/<%= @app.params['user'] %>");
+    publish("<%= @app[:host] || 'catbox' %>", "HI");
+    stdlog("[CAT] connected.")
+}
+
+// called when the client loses its connection
+function onConnectionLost(responseObject) {
+    if (responseObject.errorCode !== 0) {
+	stderr("onConnectionLost:", responseObject.errorMessage);
+    }
+}
+
+// called when a message arrives
+function onMessageArrived(message) {
+    stdin(message.payloadString);
+}
+
+client.connect({onSuccess:onConnect,
+		userName: "myusername",
+		password: "mypassword",
+		willMessage: lwt,
+		keepAliveInterval: 120,
+		//cleanSession: true,
+		useSSL: false,
+		onSuccess: function(conn) {
+		    stdlog("[CAT] connected.");
+		},
+		onFailure: function(conn, code, msg) {
+		    stderr(conn); stderr(code); stderr(msg);
+		},
+		reconnect: true,
+		//mqttVersion: 4,
+		//timeout: 10
+	       });
+
+
+
+
+
+
+function z4() {
+    var i = $("#stdin").val();
+    if (i !== '') {
+	$("#stdin").val("");
+	if (gets !== '') {
+	    state[gets] = i
+	    puts += gets + ": " + state[gets] + "\n";
+	    gets = '';
+	    stdlog("STATE: " + JSON.stringify(state));
+	} else if (i.startsWith("=")) {
+	    gets = i.substring(1)
+	} else if (i.startsWith(":")) {
+	    var v = i.split(' ')
+	    if (v.length > 1) {
+		var k = v.shift().substring(1);
+		macros[k] = v.join(' ');
+		stdout("MACRO: " + k + ": " + v.join(' '));
+	    } else {
+		$("#stdin").val(macros[v[0].substring(1)])
+	    }
+	} else if (i.startsWith('?')) {
+	    stdout(help);
+	} else if (i.startsWith('#')) {
+	    stdout("// " + i.substring(1))
+	} else {
+	    stdeval(i);
+	    stdjs(eval(i));
+	}
+	if (puts !== '') {
+	    stdout(puts);
+	    puts = ''
+	}
+    }
+    prompt();
+}
+
+$(document).on('click', '#send', function(ev) {
+    ev.preventDefault();
+    z4();
+});
+
+$("#stdin").attr('placeholder', pt);

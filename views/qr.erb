@@ -1,0 +1,28 @@
+<% @user = DB[:user][@app.params['user']] %>
+<% @qr = QR[@app.params['campaign'] || @app[:host]] %>
+<% @route = @qr.route(@app.params) %>
+
+<% if @app.params.has_key? 'chan' %>
+<h3 style='width: 100%; margin: 0; padding: 0; background-color: black; color: white;'><%= @app.params['chan'] %></h3>
+<% else %>
+<h3 style='width: 100%; margin: 0; padding: 0; background-color: red; color: white;'><%= @app[:host] %></h3>
+<% end %>
+
+<div id='qrcode' style='padding: 2%; margin: 2%;'></div>
+
+<% if @app.params.has_key? 'visitor' %>
+<h3 class='foot' style='width: 100%; text-align: center; background-color: yellow; color: black;'>
+<span class='obj'>VISITOR</span>
+</h3>
+<% else %>
+<h3 class='foot' style='width: 100%; text-align: center; background-color: black; color: white;'>
+<a class='obj' href='https://<%= @app[:host] %>/<%= @route %>' style='vertical-align: middle; text-decoration: none; color: white; border-color: <%= CORE.color("#{@user[:xp].to_i}".length) %>;'>
+<%= @user[:name] %>
+</a>
+</h3>
+<% end %>
+
+<script>
+$('#qrcode').qrcode('https://<%= @app[:host]  %>/<%= @route %>');
+// geolocate?
+</script>

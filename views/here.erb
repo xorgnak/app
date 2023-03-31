@@ -1,0 +1,54 @@
+<style>
+  .o { }
+</style>
+
+<% if params.has_key? 'place' %>
+<% @here = HERE[params['place']] %>
+<div style='width: 100%; text-align: left;'>
+<p class='head'>
+  <span style='float: right;'>
+    <span class='o'><span class='material-icons'>workspace_premium</span><span><%= @place[:affluence] %></span></span>
+    <span class='o'><span class='material-icons'>qr_code</span><span><%= @place[:scans] %></span></span>
+    <span class='o'><span class='material-icons'>favorite</span><span><%= @place[:influence] %></span></span>
+  </span>
+<button class='material-icons tog' value='info'>info</button>
+<% @here[:crossstreets].each do |e| %>
+<a class='obj' style='color: white; background-color: black; border-color: white;' href='https://<%= @app[:host] %>/city?x=<%= e %>'><%= e %></a>
+<% end %>
+</p>
+<div class='foot' id='info' style='width: 100%; display: none;'>
+
+<% [:areas, :ammenities].each do |e| %>
+<p style='width: 100%; text-align: center;'><span><%= e %></span></p>
+<ul style='text-align: left;'>
+<% @here[e].each do |x| %>
+<li><%= x %></li>
+<% end %>
+</ul>
+<% end %>
+</div>
+  <p class='foot'  style='width: 100%; text-align: center; font-size: x-large;'>
+    <span class='o'><%= @here.for %></span>
+  </p>
+</div>
+<% else %>
+<p class='head'>here</p>
+<div style='padding: 2%; margin: 2%;'>
+<% HERE.places.each do |place| %>
+<% @here = HERE[place] %>
+<a class='obj' href='https://<%= @app[:host] %>/here?place=<%= APP.enc(place) %>'>
+<span><%= place %></span>
+<% if params.has_key? 'sort' %>
+<span class='material-icons'><%= CORE.pip(@here[params['sort'].to_sym].length) %></span>
+<% end %>
+</a>
+<% end %>
+</div>
+<% end %>
+<script>
+  $(document).on('click', '.tog', function(ev) {
+      ev.preventDefault();
+      $(".foot").hide();
+      $("#" + $(this).val()).show();
+  });
+</script>

@@ -1,1 +1,17 @@
-<h1>works</h1>
+<h3 class='head'><%= @app.host[:name] %></h3>
+
+<% if "#{@app.host[:desc]}".length > 0 %>
+<div style='width: 100%; text-align: center;'>
+<p style='width: 100%; text-align: center;'>
+<span><%= @app.host[:desc] %></span>
+</p>
+</div>
+<% end %>
+
+<% if "#{@app.host[:goto]}".length > 0 %>
+<div class='foot' style='width: 100%; text-align: center;'>
+<h1 style='width: 100%; text-align: center;'>
+<a class='obj' style='border-color: white;' href='<%= @app.host[:goto] %>'>CONTINUE</a>
+</h1>
+</div>
+<% end %>

@@ -1,0 +1,21 @@
+<style>
+.b { border: thin solid black; border-radius: 50px; padding: 0 1% 0 1%; font-size: small; }
+.material-icons { font-size: x-small; }
+</style>
+
+<% @p, @h = [], Hash.new { |h,k| h[k.to_sym] = params[k] } %>
+<% ['areas', 'types', 'affluence', 'returns', 'scans', 'affinity', 'sort'].each { |e| if params.has_key?(e); @p << @h[e]; end } %>
+<% if params.has_key? 'pool' %>
+<p style="text-align: center; color: white; background-color: black; margin: 0;"><%= params['pool'] %>s: <%= @p.join(', ') %></p>
+<% DB.filter(params['pool'].to_sym, @h).each do |e| %>
+<p style='width: 100%; text-align: left;'>
+<span class='b'><%= e.for %></span>
+<span><%= e[:desc] %></span>
+</p>
+<% end %>
+<% else %>
+<p style="text-align: center; color: white; background-color: black; margin: 0;">pools:</p>
+<% DB.dbs.each do |pool| %>
+<a href='<%= pool %>' style='padding: 0 1% 0 1%; margin: 0 1% 0 1%; border: thin solid black; border-radius: 50px;'><%= pool %></a>
+<% end %>
+<% end %>

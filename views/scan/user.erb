@@ -1,0 +1,4 @@
+<% @user = DB[:user][params['user']] %>
+<span style='vertical-align: middle; border: thin solid <%= CORE.color("#{@user[:xp].to_i}".length) %>; border-radius: 0 0 50px 0; padding: 0 5% 0 0;'>
+<%= @user[:name] %>
+</span>
